@@ -1,0 +1,182 @@
+# MerchPlusQA - Azure DevOps CI/CD Pipeline
+# Complete E2E regression testing for Vision Merchandising Plus
+
+trigger:
+  branches:
+    include:
+      - main
+      - develop
+  paths:
+    include:
+      - 'e2e/**'
+      - 'azure-pipelines.yml'
+
+schedules:
+  - cron: "0 2 * * *"  # Nightly at 2 AM
+    displayName: Nightly Regression
+    branches:
+      include:
+        - main
+    always: true
+
+variables:
+  - group: MerchPlusQA-Secrets  # BASE_URL, TEST_USER, TEST_PASSWORD
+  - name: NodeVersion
+    value: '20.x'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+  # ============================================
+  # Stage 1: E2E Smoke Tests (Fast Validation)
+  # ============================================
+  - stage: SmokeTests
+    displayName: 'Smoke Tests (7 critical paths)'
+    jobs:
+      - job: Smoke
+        displayName: 'Smoke Tests'
+        timeoutInMinutes: 10
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: $(NodeVersion)
+            displayName: 'Install Node.js'
+          
+          - script: |
+              cd e2e
+              npm ci
+            displayName: 'Install dependencies'
+          
+          - script: npx playwright install --with-deps chromium
+            workingDirectory: e2e
+            displayName: 'Install Playwright browsers'
+          
+          - script: npm run test:smoke
+            workingDirectory: e2e
+            env:
+              BASE_URL: $(BASE_URL)
+              TEST_USER: $(TEST_USER)
+              TEST_PASSWORD: $(TEST_PASSWORD)
+              CI: true
+            displayName: 'Run smoke tests'
+          
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: 'e2e/junit-results/*.xml'
+              testRunTitle: 'Smoke Tests'
+              mergeTestResults: true
+            condition: succeededOrFailed()
+          
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: e2e/playwright-report
+              artifact: smoke-test-report
+              publishLocation: 'pipeline'
+            condition: failed()
+
+  # ============================================
+  # Stage 2: Full Regression (All 27 Tests)
+  # ============================================
+  - stage: RegressionTests
+    displayName: 'Full Regression (27 tests)'
+    dependsOn: SmokeTests
+    condition: succeeded()
+    jobs:
+      - job: E2E_Chromium
+        displayName: 'E2E Tests - Chromium'
+        timeoutInMinutes: 30
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: $(NodeVersion)
+          
+          - script: |
+              cd e2e
+              npm ci
+            displayName: 'Install dependencies'
+          
+          - script: npx playwright install --with-deps chromium
+            workingDirectory: e2e
+            displayName: 'Install Chromium'
+          
+          - script: npm run test:chromium
+            workingDirectory: e2e
+            env:
+              BASE_URL: $(BASE_URL)
+              TEST_USER: $(TEST_USER)
+              TEST_PASSWORD: $(TEST_PASSWORD)
+              CI: true
+            displayName: 'Run E2E tests (Chromium)'
+          
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: 'e2e/junit-results/*.xml'
+              testRunTitle: 'E2E Tests (Chromium)'
+              mergeTestResults: true
+            condition: succeededOrFailed()
+          
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: e2e/playwright-report
+              artifact: chromium-test-report
+              publishLocation: 'pipeline'
+            condition: failed()
+
+      - job: E2E_Firefox
+        displayName: 'E2E Tests - Firefox'
+        timeoutInMinutes: 30
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: $(NodeVersion)
+          
+          - script: |
+              cd e2e
+              npm ci
+            displayName: 'Install dependencies'
+          
+          - script: npx playwright install --with-deps firefox
+            workingDirectory: e2e
+            displayName: 'Install Firefox'
+          
+          - script: npm run test:firefox
+            workingDirectory: e2e
+            env:
+              BASE_URL: $(BASE_URL)
+              TEST_USER: $(TEST_USER)
+              TEST_PASSWORD: $(TEST_PASSWORD)
+              CI: true
+            displayName: 'Run E2E tests (Firefox)'
+          
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: 'e2e/junit-results/*.xml'
+              testRunTitle: 'E2E Tests (Firefox)'
+              mergeTestResults: true
+            condition: succeededOrFailed()
+
+  # ============================================
+  # Stage 3: Report Summary
+  # ============================================
+  - stage: ReportSummary
+    displayName: 'Generate Summary Report'
+    dependsOn: RegressionTests
+    condition: always()
+    jobs:
+      - job: Summary
+        displayName: 'Test Summary'
+        steps:
+          - script: |
+              echo "========================================="
+              echo "  MerchPlusQA Test Summary"
+              echo "========================================="
+              echo "Smoke Tests: Check previous stage"
+              echo "Full Regression: Check previous stage"
+              echo "HTML Reports: Published as artifacts"
+              echo "========================================="
+            displayName: 'Display Summary'
+

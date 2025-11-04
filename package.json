@@ -1,0 +1,30 @@
+{
+  "name": "merchplus-qa",
+  "version": "1.0.0",
+  "description": "E2E regression testing suite for Vision Merchandising Plus",
+  "private": true,
+  "scripts": {
+    "test": "cd e2e && npm test",
+    "test:smoke": "cd e2e && npm run test:smoke",
+    "test:headed": "cd e2e && npm run test:headed",
+    "test:ui": "cd e2e && npm run test:ui",
+    "test:debug": "cd e2e && npm run test:debug",
+    "report": "cd e2e && npm run report",
+    "setup": "pwsh scripts/setup.ps1",
+    "docker:up": "cd docker && docker-compose up -d",
+    "docker:down": "cd docker && docker-compose down",
+    "docker:logs": "cd docker && docker-compose logs -f oracle-test",
+    "cleanup": "pwsh scripts/cleanup.ps1"
+  },
+  "keywords": [
+    "qa",
+    "e2e",
+    "playwright",
+    "blazor",
+    "devexpress",
+    "regression-testing"
+  ],
+  "author": "Jesta IS - QA Team",
+  "license": "PROPRIETARY"
+}
+

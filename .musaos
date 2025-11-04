@@ -1,0 +1,9 @@
+# MusaOS Project Configuration
+# MerchPlusQA - Vision Merchandising Plus QA Automation Suite
+
+project_key=merchplus-qa
+project_id=a1b2c3d4-qa01-4e2e-a8b9-merchplusqa001
+daemon_url=http://localhost:7000
+tenant_id=00000000-0000-0000-0000-000000000002
+stack=playwright,typescript,docker,oracle,blazor,devexpress
+

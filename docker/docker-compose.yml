@@ -1,0 +1,43 @@
+version: '3.8'
+
+# MerchPlusQA - Test Environment
+# Oracle test database for E2E testing
+
+services:
+  oracle-test:
+    image: gvenzl/oracle-free:latest
+    container_name: merchplus-qa-oracle
+    restart: unless-stopped
+
+    ports:
+      - "1521:1521"
+
+    environment:
+      ORACLE_PASSWORD: MerchPlusQATest123
+      APP_USER: TEST_MERCH
+      APP_USER_PASSWORD: testmerch123
+      ORACLE_SID: FREE
+
+    volumes:
+      - oracle-test-data:/opt/oracle/oradata
+      - ./oracle/init:/docker-entrypoint-initdb.d/seeds:ro
+      - ./oracle/health.sh:/opt/health/oracle-health.sh:ro
+
+    healthcheck:
+      test: ["CMD-SHELL", "/bin/bash /opt/health/oracle-health.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 90s  # Oracle takes 60-80s to start
+
+    networks:
+      - merchplus-qa-network
+
+volumes:
+  oracle-test-data:
+    driver: local
+
+networks:
+  merchplus-qa-network:
+    driver: bridge
+
