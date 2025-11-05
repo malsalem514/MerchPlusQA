@@ -79,12 +79,7 @@ export default defineConfig({
     },
   ],
 
-  // Local dev server (optional)
-  webServer: process.env.CI ? undefined : {
-    command: 'dotnet run --project ../VisionMerchandising.Blazor.WebAssembly',
-    url: BASE_URL,
-    reuseExistingServer: true,
-    timeout: 120000  // 2 min for Blazor to start
-  },
+  // Local dev server (disabled - app runs on remote server)
+  // webServer: undefined,
 });
 

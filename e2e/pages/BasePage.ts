@@ -1,42 +1,55 @@
-import { Page, expect } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
+/**
+ * BasePage - Base class for all Page Object Models
+ *
+ * Provides common functionality for Vision Merch+ navigation and interactions
+ */
 export class BasePage {
-  constructor(protected page: Page) {}
+  readonly page: Page;
 
-  async waitForBlazorReady() {
-    await this.page.waitForSelector('#app', { state: 'visible' });
-    await this.page.waitForLoadState('networkidle');
-    await this.page.waitForFunction(() => {
-      const app = document.querySelector('#app');
-      return app && app.childElementCount > 0;
-    });
+  // Common elements
+  readonly hamburgerMenu: Locator;
+  readonly searchMenu: Locator;
+  readonly homeButton: Locator;
+  readonly userInfo: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+
+    // Common navigation elements
+    this.hamburgerMenu = page.getByRole('button', { name: '☰' });
+    this.searchMenu = page.getByPlaceholder('Search menu...');
+    this.homeButton = page.getByRole('button', { name: 'Home' });
+    this.userInfo = page.locator('text=MUSERQA');
   }
 
-  async fill(testId: string, value: string) {
-    await this.page.fill(`[data-testid="${testId}"]`, value);
-  }
-
-  async click(testId: string) {
-    await this.page.click(`[data-testid="${testId}"]`);
-  }
-
-  async expectVisible(testId: string) {
-    await expect(this.page.locator(`[data-testid="${testId}"]`))
-      .toBeVisible();
-  }
-
-  async expectText(testId: string, text: string) {
-    await expect(this.page.locator(`[data-testid="${testId}"]`))
-      .toContainText(text);
-  }
-
-  async expectSuccess(message?: string) {
-    const toast = this.page.locator('[data-testid="success-toast"]');
-    await expect(toast).toBeVisible({ timeout: 5000 });
-
-    if (message) {
-      await expect(toast).toContainText(message);
+  /**
+   * Navigate to a module via tree navigation
+   * Example: navigateToModule('Product', 'Vendor', 'Vendor Management')
+   */
+  async navigateToModule(...menuPath: string[]) {
+    for (const menuItem of menuPath) {
+      // Click the paragraph text inside treeitem (more reliable than treeitem role)
+      const menuParagraph = this.page.locator(`p:has-text("${menuItem}")`).first();
+      await menuParagraph.click({ timeout: 15000 });
+      await this.page.waitForTimeout(500); // Menu expansion animation
     }
   }
-}
 
+  /**
+   * Close current tab
+   */
+  async closeTab(tabName: string) {
+    const tab = this.page.getByRole('button', { name: new RegExp(tabName, 'i') });
+    const closeButton = tab.locator('..').getByRole('button').last(); // X button
+    await closeButton.click();
+  }
+
+  /**
+   * Wait for page to be ready
+   */
+  async waitForReady() {
+    await this.page.waitForLoadState('networkidle');
+  }
+}
