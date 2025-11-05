@@ -4,7 +4,7 @@
 param(
     [Parameter(Mandatory=$true)]
     [string]$ComponentPath,
-    
+
     [switch]$ShowDetails
 )
 
@@ -51,10 +51,10 @@ foreach ($line in $lines) {
         if ($line -match [regex]::Escape($pattern)) {
             # Check if already has data-testid
             $hasTestId = $line -match 'data-testid\s*='
-            
+
             if ($hasTestId) {
                 $hasTestIdCount++
-                
+
                 if ($ShowDetails) {
                     # Extract testid value
                     if ($line -match 'data-testid\s*=\s*"([^"]+)"') {
@@ -64,14 +64,14 @@ foreach ($line in $lines) {
                 }
             } else {
                 $needsTestIdCount++
-                
+
                 $results += [PSCustomObject]@{
                     Line = $lineNum
                     ElementType = $patterns[$pattern]
                     Pattern = $pattern
                     CodeSnippet = $line.Trim().Substring(0, [Math]::Min(80, $line.Trim().Length))
                 }
-                
+
                 Write-Host "  ⚠️  Line $lineNum ($($patterns[$pattern])): NEEDS testid" -ForegroundColor Yellow
                 if ($ShowDetails) {
                     Write-Host "      $($line.Trim())" -ForegroundColor Gray
@@ -95,7 +95,7 @@ if ($needsTestIdCount -eq 0) {
 } else {
     Write-Host "📋 Elements needing testid:" -ForegroundColor Yellow
     $results | Format-Table Line, ElementType, Pattern -AutoSize
-    
+
     Write-Host ""
     Write-Host "Next: Add data-testid to these $needsTestIdCount elements" -ForegroundColor Cyan
 }

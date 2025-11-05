@@ -4,7 +4,7 @@
 param(
     [Parameter(Mandatory=$true)]
     [string]$SolutionPath,
-    
+
     [string]$Configuration = "Debug",
     [switch]$Clean
 )

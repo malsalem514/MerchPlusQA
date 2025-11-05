@@ -4,7 +4,7 @@
 param(
     [Parameter(Mandatory=$true)]
     [string]$TestId,
-    
+
     [switch]$Strict
 )
 
@@ -28,8 +28,8 @@ if ($TestId -match '--') {
 
 # Rule 4: Should include entity prefix (warning in non-strict mode)
 $validPrefixes = @(
-    'vendor', 'po', 'style', 'transfer', 'inventory', 
-    'save', 'cancel', 'delete', 'edit', 'view', 'add', 
+    'vendor', 'po', 'style', 'transfer', 'inventory',
+    'save', 'cancel', 'delete', 'edit', 'view', 'add',
     'create', 'search', 'filter', 'grid', 'form',
     'login', 'username', 'password', 'dashboard', 'nav'
 )

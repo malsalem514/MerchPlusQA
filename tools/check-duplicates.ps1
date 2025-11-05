@@ -4,7 +4,7 @@
 param(
     [Parameter(Mandatory=$true)]
     [string]$SolutionPath,
-    
+
     [Parameter(Mandatory=$true)]
     [string]$TestId
 )
@@ -23,7 +23,7 @@ Write-Host ""
 
 # Search for testid in .razor files
 $searchPattern = "data-testid\s*=\s*`"$TestId`""
-$matches = Get-ChildItem -Path $SolutionPath -Recurse -Filter "*.razor" | 
+$matches = Get-ChildItem -Path $SolutionPath -Recurse -Filter "*.razor" |
     Select-String -Pattern $searchPattern
 
 if ($matches.Count -eq 0) {

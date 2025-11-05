@@ -16,12 +16,12 @@ Write-Host ""
 # Clean test artifacts
 if ($All -or $Artifacts) {
     Write-Host "Cleaning test artifacts..." -ForegroundColor Yellow
-    
+
     Remove-Item -Path "e2e\test-results" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "e2e\playwright-report" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "e2e\junit-results" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "e2e\.cache" -Recurse -Force -ErrorAction SilentlyContinue
-    
+
     Write-Host "  ✅ Test artifacts cleaned" -ForegroundColor Green
 }
 
@@ -29,11 +29,11 @@ if ($All -or $Artifacts) {
 if ($All -or $Docker) {
     Write-Host ""
     Write-Host "Stopping Docker containers..." -ForegroundColor Yellow
-    
+
     Set-Location docker
     docker-compose down -v 2>$null
     Set-Location ..
-    
+
     Write-Host "  ✅ Docker containers stopped and removed" -ForegroundColor Green
 }
 
@@ -41,12 +41,12 @@ if ($All -or $Docker) {
 if ($All -or $Dependencies) {
     Write-Host ""
     Write-Host "Removing dependencies..." -ForegroundColor Yellow
-    
+
     Remove-Item -Path "node_modules" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "e2e\node_modules" -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "package-lock.json" -Force -ErrorAction SilentlyContinue
     Remove-Item -Path "e2e\package-lock.json" -Force -ErrorAction SilentlyContinue
-    
+
     Write-Host "  ✅ Dependencies removed" -ForegroundColor Green
 }
 

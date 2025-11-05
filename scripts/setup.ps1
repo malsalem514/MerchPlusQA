@@ -59,7 +59,7 @@ if (-not $SkipDocker) {
     Set-Location docker
     docker-compose up -d
     Write-Host "  ⏳ Waiting for Oracle to be healthy (~90 seconds)..." -ForegroundColor Yellow
-    
+
     Start-Sleep -Seconds 30
     $healthy = $false
     for ($i = 1; $i -le 6; $i++) {
@@ -71,13 +71,13 @@ if (-not $SkipDocker) {
         Write-Host "  ⏳ Attempt $i/6: $status" -ForegroundColor Yellow
         Start-Sleep -Seconds 10
     }
-    
+
     if ($healthy) {
         Write-Host "  ✅ Oracle test database is healthy" -ForegroundColor Green
     } else {
         Write-Host "  ⚠️  Oracle still starting. Check: docker ps" -ForegroundColor Yellow
     }
-    
+
     Set-Location ..
 } else {
     Write-Host ""

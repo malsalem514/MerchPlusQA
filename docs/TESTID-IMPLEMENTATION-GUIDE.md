@@ -1,7 +1,7 @@
 # data-testid Implementation Guide - Complete Walkthrough
 
-**For:** Vision Merchandising Plus Development Team  
-**Purpose:** Add data-testid attributes safely (99% confidence, 0% breaks)  
+**For:** Vision Merchandising Plus Development Team
+**Purpose:** Add data-testid attributes safely (99% confidence, 0% breaks)
 **Timeline:** 7-8 hours total (spread over 2 days)
 
 ---
@@ -52,7 +52,7 @@ Copy-Item "C:\musa\Merch\MerchPlusQA\tools\*" -Destination ".qa-tools\" -Recurse
 
 ## Priority 1 - Smoke Tests (7 attributes) - Day 1 Morning
 - [ ] Login.razor (3 attributes)
-- [ ] MainLayout.razor (2 attributes)  
+- [ ] MainLayout.razor (2 attributes)
 - [ ] VendorManagement.razor (2 attributes - grid only)
 
 ## Priority 2 - Vendor Details (10 attributes) - Day 1 Afternoon
@@ -110,7 +110,7 @@ code "..\View\VisionMerchandising.Razor\Views\Login\Login.razor"
 **Step 3: Validate testids**
 ```powershell
 .\validate-testid.ps1 -TestId "username"       # ✅
-.\validate-testid.ps1 -TestId "password"       # ✅  
+.\validate-testid.ps1 -TestId "password"       # ✅
 .\validate-testid.ps1 -TestId "login-button"   # ✅
 ```
 
@@ -354,7 +354,7 @@ Add data-testid attributes to enable E2E regression testing with Playwright.
 
 ---
 
-**Confidence:** 99% (with all tools + process)  
-**Risk:** <1% (production incidents)  
+**Confidence:** 99% (with all tools + process)
+**Risk:** <1% (production incidents)
 **Timeline:** 7-8 hours (comfortable pace)
 

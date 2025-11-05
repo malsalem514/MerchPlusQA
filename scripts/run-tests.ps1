@@ -4,11 +4,11 @@
 param(
     [ValidateSet("smoke", "vendor", "po", "all")]
     [string]$Suite = "smoke",
-    
+
     [switch]$Headed,
     [switch]$UI,
     [switch]$Debug,
-    
+
     [ValidateSet("chromium", "firefox", "webkit", "all")]
     [string]$Browser = "chromium"
 )
